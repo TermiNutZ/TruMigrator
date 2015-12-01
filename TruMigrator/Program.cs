@@ -93,7 +93,6 @@
         private static int GetFirstNotAppliedMigration(SqlConnection connection, List<string> migrationFiles)
         {
             int currentMigration = 0;
-
             var appliedMigration =
                 connection.Query<Migration>("SELECT * FROM [dbo].[__TruMigrationHistory]")
                     .OrderBy(x => x.MigrationId)
