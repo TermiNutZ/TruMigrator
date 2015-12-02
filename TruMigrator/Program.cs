@@ -22,7 +22,18 @@
             Console.ForegroundColor = ConsoleColor.White;
             string sqlConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
 
-            var migrationFiles = GetMigrationFileNames().ToList();
+            List<string> migrationFiles;
+            try
+            {
+                migrationFiles = GetMigrationFileNames().ToList();
+            }
+            catch (Exception)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("ERROR: Path '{0}' to migration directory not found", ConfigurationManager.AppSettings["MigrationDirectory"]);
+                Console.ReadKey();
+                return;
+            }
 
             Console.WriteLine("[+]Using SQL Connection String: '{0}'", sqlConnectionString);
             using (var connection = new SqlConnection(sqlConnectionString))
@@ -79,7 +90,7 @@
             Console.WriteLine("-----------------------------------------------------------------------------");
             Console.ForegroundColor = ConsoleColor.White;
 
-            string script = File.ReadAllText(migrationFile);
+            string script = File.ReadAllText(Path.Combine(ConfigurationManager.AppSettings["MigrationDirectory"], migrationFile));
             Console.WriteLine("Execute SQL Script");
             Console.WriteLine(script);
             Console.WriteLine();
